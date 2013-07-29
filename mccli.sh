@@ -68,7 +68,7 @@ restart() {
                     echo $1' is not running. Perhaps you meant to start it?'
                 else
                     echo 'Restarting '$1
-                    screen -x `cat /etc/$1.pid` -p 0 -X stuff 'stop'$'\012';
+                    screen -x `cat /etc/$1.pid` -p 0 -X stuff '.restart'$'\012';
                     timeout 20 tail -f /servers/$1/server.log;
             fi;
         else
