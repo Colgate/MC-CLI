@@ -29,4 +29,4 @@ To run this script, you will need the following
 3. Start your server using the CLI script to ensure the correct process IDs are stored.
 
 ###Screenshots###
-![](http://screencast.com/t/1RctKXnbKHF)
+![](http://content.screencast.com/users/ColgateMinuette/folders/Jing/media/91389c4a-3230-4b6c-a62b-7573c1bf5d55/2013-07-29_0418.png)
