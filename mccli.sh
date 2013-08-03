@@ -149,7 +149,7 @@ status() {
                             echo "Uptime: \"`tail -n 20 /servers/$1/server.log | grep "Uptime:" | awk '{for(i=5;i<=NF;i++){printf "%s ",$i}}'`\"" >> /tmp/$1.status
                             echo "TPS: \"`tail -n 20 /servers/$1/server.log | grep "TPS" | awk '{print $7}'`\"" >> /tmp/$1.status
                             echo "Memory: \"`tail -n 20 /servers/$1/server.log | grep "Maximum" | awk '{print $6}'` Maximum | `tail -n 20 /servers/$1/server.log | grep "Free memory:" | awk '{print $6}'` Free\"" >> /tmp/$1.status
-                            screen -x `cat /etc/$1.pid` -p 0 -X stuff 'who'$'\012';
+                            screen -x `cat /etc/$1.pid` -p 0 -X stuff 'list'$'\012';
                             sleep 0.5;
                             echo "Players: \"`tail -n 10 /servers/$1/server.log | grep "There are" | awk '{print $6}'`\"" >> /tmp/$1.status
                     fi;
