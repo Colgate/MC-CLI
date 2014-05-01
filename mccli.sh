@@ -10,10 +10,9 @@
 #Server process check function
 isOnline() {
     proc=/etc/$1.pid
-    [[ -f $proc ]] && {
-        ps -p $proc> /dev/null
-        [[ $? = 1 ]] && return 1 || return 0;
-    } || return 1
+    [[ ! -f $proc ]] && {
+        ps -p `cat $proc` > /dev/null && return 1 || return 0;
+    } || return 1;
 }
 
 #Start server if not already running
