@@ -89,7 +89,7 @@ case "$2" in
   exec)
     exec $1 "$3 $4 $5 $6 $7 $8" ;;
   status)
-    isOnline $1 && echo -e "\n\tServer $1(pid `cat /tmp/$1.pid`) is running.\n" ;;
+    isOnline $1 && echo -e "\n\tServer $1(pid `cat /tmp/$1.pid`) is running.\n" || echo -e "\n\tServer is not running.\n" ;;
   kill)
     kill $1 ;;
   *)
