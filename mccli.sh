@@ -10,19 +10,19 @@
 #Server process check function
 isOnline() {
     proc=/tmp/$1.pid
-    [[ -f $proc ]] && ps -p `cat $proc` &> /dev/null && return 0 || return 1;
+    [[ -f $proc ]] && ps -p $(cat $proc) &> /dev/null && return 0 || return 1;
 }
 
 #Start server if not already running
 start() {
     isOnline $1 && {
         echo 'Unholding '$1;
-        screen -x `cat /tmp/$1.pid` -p 0 -X stuff '.unhold'$'\012';
+        screen -x $(cat /tmp/$1.pid) -p 0 -X stuff '.unhold'$'\012';
     } || {
         echo 'Starting '$1;
         rm -f /tmp/$1.pid;
         screen -S $1 -d -m /servers/$1/rtoolkit.sh;
-        screen -list | grep $1 | cut -f1 -d'.' | sed 's/\W//g' > /tmp/$1.pid;
+        screen -ls | awk -F. '/'$1'/{gsub(/\W/, "", $1); print $1}' > /tmp/$1.pid
     }
 }
 
@@ -30,14 +30,14 @@ start() {
 stop() {
     isOnline $1 && {
         echo 'Stopping '$1
-        screen -x `cat /tmp/$1.pid` -p 0 -X stuff '.hold'$'\012';
+        screen -x $(cat /tmp/$1.pid) -p 0 -X stuff '.hold'$'\012';
     } || echo "$1 is already stopped or not running!"
 }    
 
 #Attach to server screen session/console.
 attach() {
     isOnline $1 && {
-        screen -x `cat /tmp/$1.pid`
+        screen -x $(cat /tmp/$1.pid)
     } || echo "$1 is not currently running!"
 }
 
@@ -45,7 +45,7 @@ attach() {
 restart() {
     isOnline $1 && {
         echo 'Restarting '$1
-        screen -x `cat /tmp/$1.pid` -p 0 -X stuff '.restart'$'\012';
+        screen -x $(cat /tmp/$1.pid) -p 0 -X stuff '.restart'$'\012';
     } || echo "$1 is not currently running!"
 
 }
@@ -53,7 +53,7 @@ restart() {
 #Soft restart the server. (send "reload" command)
 reload() {
     isOnline $1 && {
-        screen -x `cat /tmp/$1.pid` -p 0 -X stuff 'reload'$'\012';     
+        screen -x $(cat /tmp/$1.pid) -p 0 -X stuff 'reload'$'\012';     
     } || echo "$1 is not currently running!"
 }
 
@@ -61,7 +61,7 @@ reload() {
 exec() {
     isOnline $1 && {
         echo 'sending command '"$2 $3 $4 $5 $6 $7 $8 $9"' to '$1
-        screen -x `cat /tmp/$1.pid` -p 0 -X stuff "$2 $3 $4 $5 $6 $7 $8 $9"$'\012';
+        screen -x $(cat /tmp/$1.pid) -p 0 -X stuff "$2 $3 $4 $5 $6 $7 $8 $9"$'\012';
     } || echo "$1 is not currently running!"
 }
 
@@ -69,8 +69,8 @@ exec() {
 kill() {
     isOnline $1 && {
         echo 'Killing '$1
-        screen -x `cat /tmp/$1.pid` -p 0 -X stuff '.stopwrapper'$'\012';
-        { kill `cat /tmp/$1.pid`; screen -wipe; rm -f /tmp/$1.pid; } | at now + 5 minutes
+        screen -x $(cat /tmp/$1.pid) -p 0 -X stuff '.stopwrapper'$'\012';
+        { kill $(cat /tmp/$1.pid); screen -wipe; rm -f /tmp/$1.pid; } | at now + 1 minute
     } || echo "$1 is not currently running!"
 }
 
@@ -89,7 +89,7 @@ case "$2" in
   exec)
     exec $1 "$3 $4 $5 $6 $7 $8" ;;
   status)
-    isOnline $1 && echo -e "\n\tServer $1(pid `cat /tmp/$1.pid`) is running.\n" || echo -e "\n\tServer is not running.\n" ;;
+    isOnline $1 && echo -e "\n\tServer $1(pid $(cat /tmp/$1.pid)) is running.\n" || echo -e "\n\tServer is not running.\n" ;;
   kill)
     kill $1 ;;
   *)
